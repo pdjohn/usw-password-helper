@@ -16,17 +16,13 @@ using System.Windows.Shapes;
 namespace PasswordHelper
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for Passwords.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class Passwords : Page
     {
-        public MainWindow()
+        public Passwords()
         {
             InitializeComponent();
-            States state = States.getInstance();
-            state.frame = _mainFrame;
-            state.frame.Navigate(new Auth());
         }
-
     }
 }

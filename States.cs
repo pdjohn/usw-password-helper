@@ -1,0 +1,25 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Controls;
+
+namespace PasswordHelper
+{
+    internal class States
+    {
+        public static States _instance;
+        private Frame _frame = null;
+   
+        public Frame frame { get { return _frame; } set { _frame = value; } }
+        public static States getInstance()
+        {
+            if(_instance == null)
+            {
+                _instance = new States();
+            }
+            return _instance;
+        }
+    }
+}

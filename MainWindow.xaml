@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:PasswordHelper"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
 
-    </Grid>
+    <DockPanel>
+        <Frame NavigationUIVisibility="Hidden" x:Name="_mainFrame" />
+    </DockPanel>
 </Window>
