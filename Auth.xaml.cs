@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +14,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
+using BC = BCrypt.Net.BCrypt;
 
 namespace PasswordHelper
 {
@@ -38,14 +42,58 @@ namespace PasswordHelper
 
         private void LgoinButton(object sender, RoutedEventArgs e)
         {
-            if(username.Text.Equals("admin") && password.Password.Equals("password"))
+            state.db.cmd.CommandText = "select * from users where user_name='" + username.Text.ToString() + "'";
+            SQLiteDataReader reader = state.db.cmd.ExecuteReader();
+            List<Users> users = Users.GetUserData(ref reader);
+            if(users.Count > 0)
             {
-                state.frame.Navigate(new Passwords());
+                var user = users[0];
+                // do stronog password comparison and storing here.
+                if(!BC.Verify(password.Password.ToString(), user.password))
+                {
+                    MessageBox.Show("Password is invalid!");
+                    return;
+                }
+                Trace.WriteLine(user.user_type);
+                if(user.user_type == "admin")
+                {
+                    // go to admin page.
+                    state.frame.Navigate(new Passwords("admin"));
+                }
+                else
+                {
+                    // go to some other page.
+                    state.frame.Navigate(new Passwords("users"));
+                }
+
             }
             else
             {
-                MessageBox.Show("Username password not correct!");
+                MessageBox.Show("No User found!");
+                return;
             }
+        }
+
+        private void RegisterButton(object sender, RoutedEventArgs e)
+        {
+            string user_name = username.Text.ToString();
+            string passwd = password.Password.ToString();
+
+            state.db.cmd.CommandText = String.Format("select count(user_id) from users where user_name='{0}'", user_name);
+            var result = Convert.ToInt32(state.db.cmd.ExecuteScalar());
+            if(result > 0)
+            {
+                MessageBox.Show("username unavailable");
+                return;
+            }
+            else
+            {
+                var hash = BC.HashPassword(passwd);
+                state.db.cmd.CommandText = String.Format("insert into users(user_type, user_name, password, master_key) values ('user', '{0}', '{1}', 'master-key')", user_name, hash);
+                state.db.cmd.ExecuteNonQuery();
+                MessageBox.Show("user registered successfully! please login.");
+            }
+
         }
     }
 }

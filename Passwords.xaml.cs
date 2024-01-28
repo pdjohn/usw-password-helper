@@ -20,9 +20,13 @@ namespace PasswordHelper
     /// </summary>
     public partial class Passwords : Page
     {
-        public Passwords()
+
+        private string _type = "";
+        public Passwords(string type)
         {
+            this._type = type;
             InitializeComponent();
+            label.Content = this._type;
         }
     }
 }

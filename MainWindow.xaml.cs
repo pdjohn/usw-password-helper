@@ -26,6 +26,8 @@ namespace PasswordHelper
             States state = States.getInstance();
             state.frame = _mainFrame;
             state.frame.Navigate(new Auth());
+            state.db = new Database();
+            state.db.MigrateDatabase();
         }
 
     }

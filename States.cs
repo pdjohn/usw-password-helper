@@ -11,8 +11,10 @@ namespace PasswordHelper
     {
         public static States _instance;
         private Frame _frame = null;
+        private Database _database = null;
    
         public Frame frame { get { return _frame; } set { _frame = value; } }
+        public Database db { get { return _database; } set { _database = value; } }
         public static States getInstance()
         {
             if(_instance == null)
