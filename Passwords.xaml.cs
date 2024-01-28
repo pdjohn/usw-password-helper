@@ -1,5 +1,8 @@
-﻿using System;
+﻿using PasswordHelper;
+using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -23,18 +26,25 @@ namespace PasswordHelper
     {
 
         private string _type = "";
+        private States _state;
         public Passwords(string type)
         {
             InitializeComponent();
-            List<Users> UsersList = new List<Users> {
-                new Users(1, "admin", "admin", "admin", "admin"),
-                new Users(2, "admin2", "admin", "admin", "admin")
-            };
-
-            Trace.WriteLine("" + UsersList[0].user_role + " " + UsersList[0].user_name);
-
             this._type = type;
-            userListBox.ItemsSource = UsersList;
+            this._state = States.getInstance();
+            userListBox.ItemsSource = GetData();
+        }
+
+        private List<PasswordManager> GetData()
+        {
+            this._state.db.cmd.CommandText = String.Format(@"
+                select * from password_manager pm where pm.user_id = {0};
+            ", this._state.user.user_id);
+            SQLiteDataReader reader = this._state.db.cmd.ExecuteReader();
+            List<PasswordManager> list = PasswordManager.GetPasswordManagreList(ref reader);
+            Trace.WriteLine("count: " + list.Count);
+            Trace.WriteLine("user_id: " + this._state.user.user_id);
+            return list;
         }
     }
 }

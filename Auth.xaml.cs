@@ -24,7 +24,8 @@ namespace PasswordHelper
     /// </summary>
     public partial class Auth : Page
     {
-        States state = null; 
+        private States state; 
+
         public Auth()
         {
             InitializeComponent();
@@ -56,6 +57,7 @@ namespace PasswordHelper
                     MessageBox.Show("Password is invalid!");
                     return;
                 }
+                this.state.user = user;
                 if(user.user_role == "admin")
                 {
                     // go to admin page.
