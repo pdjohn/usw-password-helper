@@ -62,16 +62,83 @@ namespace PasswordHelper
         {
             if (!checkIfExist("users"))
             {
-                command.CommandText = "create table users(user_id integer primary key autoincrement not null, user_type text, user_name text, email text, password text, master_key text);";
+                command.CommandText = @"
+                    create table users(
+                        user_id integer primary key autoincrement not null,
+                        user_role varchar(10),
+                        user_name varchar(255),
+                        first_name varchar(255),
+                        last_name varchar(255),
+                        email varchar(255),
+                        password text,
+                        master_password text,
+                        created_at timestamp default CURRENT_TIMESTAMP,
+                        updated_at timestamp default CURRENT_TIMESTAMP
+                    );
+                ";
                 var result = command.ExecuteNonQuery();
                 var hash = BC.HashPassword("password");
-                command.CommandText = String.Format("insert into users(user_type,user_name,email,password,master_key) values ('admin', 'admin', 'admin@email.com', '{0}', 'master-key')", hash);
+                PM_helper pm = new PM_helper(); // Password Manager Helper
+                command.CommandText = String.Format(@"
+                    insert into users(user_role,user_name,email,password, master_password) 
+                    values ('admin', 'admin', 'admin@email.com', '{0}', '{1}')",
+                    hash, pm.GenerateMasterKey()
+                );
                 command.ExecuteNonQuery();
-                
-
-
-                
             }
+
+            if (!checkIfExist("website"))
+            {
+                command.CommandText = @"
+                    create table website(
+                        website_id integer primary key autoincrement not null,
+                        website_name varchar(255),
+                        website_url varchar(255)
+                    );
+                ";
+                command.ExecuteNonQuery();
+            }
+
+            if (!checkIfExist("desktop"))
+            {
+                command.CommandText = @"
+                    create table desktop(
+                        desktop_id integer primary key autoincrement not null,
+                        desktop_name varchar(255)
+                    );
+                ";
+                command.ExecuteNonQuery();
+            }
+            if (!checkIfExist("game"))
+            {
+                command.CommandText = @"
+                    create table game(
+                        game_id integer primary key autoincrement not null,
+                        game_name varchar(255),
+                        game_developer varchar(255)
+                    );
+                ";
+                command.ExecuteNonQuery();
+            }
+            if (!checkIfExist("password_manager")){
+                command.CommandText = @"
+                    create table password_manager(
+                        pm_id integer primary key autoincrement not null,
+                        user_id int not null,
+                        username varchar(255),
+                        password varchar(255),
+                        application varchar(20),
+                        application_id int,
+                        created_at timestamp default CURRENT_TIMESTAMP,
+                        updated_at timestamp default CURRENT_TIMESTAMP,
+                        foreign key (user_id) references users(user_id)
+                    );
+                ";
+                command.ExecuteNonQuery();
+            }
+
+
+
         }
 
         ~Database() {

@@ -8,16 +8,20 @@ namespace PasswordHelper
     class Users
     {
         public Int64 user_id;
-        public string username;
-        public string user_type;
+        public string user_name;
+        public string user_role;
         public string password;
-        private string master_key;
+        private string? master_password;
 
-        public Users(Int64 user_id, string username, string password, string user_type) { 
+        public string UserName { get { return user_name; } }
+        public string UserRole { get { return user_role; } }
+
+        public Users(Int64 user_id, string user_name, string password, string user_role, string? master_password) { 
             this.user_id = user_id;
-            this.username = username; 
+            this.user_name = user_name;
+            this.user_role = user_role;
             this.password = password;
-            this.user_type = user_type;
+            this.master_password = master_password;
         }
 
         public static List<Users> GetUserData (ref SQLiteDataReader reader)
@@ -30,7 +34,11 @@ namespace PasswordHelper
                 {
                     reader.Read();
                     list.Add(new Users(
-                        (Int64)reader["user_id"], (string)reader["user_name"], (string)reader["password"], (string)reader["user_type"]
+                        (Int64)reader["user_id"],
+                        (string)reader["user_name"],
+                        (string)reader["password"],
+                        (string)reader["user_role"],
+                        (string)reader["master_password"]
                       ));
                 }
             }

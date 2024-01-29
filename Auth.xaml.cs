@@ -45,6 +45,8 @@ namespace PasswordHelper
             state.db.cmd.CommandText = "select * from users where user_name='" + username.Text.ToString() + "'";
             SQLiteDataReader reader = state.db.cmd.ExecuteReader();
             List<Users> users = Users.GetUserData(ref reader);
+
+            // test
             if(users.Count > 0)
             {
                 var user = users[0];
@@ -54,8 +56,7 @@ namespace PasswordHelper
                     MessageBox.Show("Password is invalid!");
                     return;
                 }
-                Trace.WriteLine(user.user_type);
-                if(user.user_type == "admin")
+                if(user.user_role == "admin")
                 {
                     // go to admin page.
                     state.frame.Navigate(new Passwords("admin"));
@@ -89,7 +90,8 @@ namespace PasswordHelper
             else
             {
                 var hash = BC.HashPassword(passwd);
-                state.db.cmd.CommandText = String.Format("insert into users(user_type, user_name, password, master_key) values ('user', '{0}', '{1}', 'master-key')", user_name, hash);
+                PM_helper pm = new PM_helper();
+                state.db.cmd.CommandText = String.Format("insert into users(user_role, user_name, password, master_password) values ('user', '{0}', '{1}', '{2}')", user_name, hash, pm.GenerateMasterKey());
                 state.db.cmd.ExecuteNonQuery();
                 MessageBox.Show("user registered successfully! please login.");
             }
