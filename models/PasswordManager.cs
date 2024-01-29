@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace PasswordHelper
 {
-    internal class PasswordManager
+    public class PasswordManager : INotifyPropertyChanged
     {
         public Int64 pm_id;
         public int user_id;
@@ -17,14 +19,30 @@ namespace PasswordHelper
         public int application_id;
         public DateTime created_at;
         public DateTime updated_at;
+        public string _master_key;
+        private bool _isPasswordVisible;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public string UserName { get { return user_name; } }
-        public string Password { get { return password; } }
+        public string Password
+        {
+            get {
+                string decrypted_password = new PM_helper().DecryptPassword(password, this._master_key, password.Length);
+                return _isPasswordVisible ? decrypted_password : "********"; 
+            }
+            set
+            {
+                password = value;
+                OnPropertyChanged(nameof(Password));
+            }
+        }
         public string Application { get { return application; } }
 
         public PasswordManager(
-            Int64 pm_id, int user_id, string user_name, string password, 
-            string application, int application_id, DateTime created_at, DateTime updated_at
+            Int64 pm_id, int user_id, string user_name, string password,
+            string application, int application_id, DateTime created_at, 
+            DateTime updated_at, string master_key
         )
         {
             this.pm_id = pm_id;
@@ -35,6 +53,8 @@ namespace PasswordHelper
             this.application_id = application_id;
             this.created_at = created_at;
             this.updated_at = updated_at;
+            this._master_key = master_key;
+
         }
 
         public static List<PasswordManager> GetPasswordManagreList(ref SQLiteDataReader reader)
@@ -44,7 +64,7 @@ namespace PasswordHelper
             if (reader.StepCount > 0)
             {
                 //for (int i = 0; i < reader.StepCount; i++)
-                while(reader.Read())
+                while (reader.Read())
                 {
                     //reader.Read();
                     list.Add(new PasswordManager(
@@ -55,7 +75,8 @@ namespace PasswordHelper
                         (string)reader["application"],
                         (int)reader["application_id"],
                         (DateTime)reader["created_at"],
-                        (DateTime)reader["updated_at"]
+                        (DateTime)reader["updated_at"],
+                        (string)reader["master_password"]
                       ));
                 }
             }
@@ -64,6 +85,22 @@ namespace PasswordHelper
 
         }
 
-    }
+        public bool IsPasswordVisible
+        {
+            get { return _isPasswordVisible; }
+            set
+            {
+                _isPasswordVisible = value;
+                OnPropertyChanged(nameof(IsPasswordVisible));
+                OnPropertyChanged(nameof(Password));
+            }
+        }
 
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
 }
+
+

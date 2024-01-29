@@ -37,14 +37,38 @@ namespace PasswordHelper
 
         private List<PasswordManager> GetData()
         {
-            this._state.db.cmd.CommandText = String.Format(@"
-                select * from password_manager pm where pm.user_id = {0};
-            ", this._state.user.user_id);
+            if(this._type == "admin")
+            {
+                this._state.db.cmd.CommandText = @"
+                    select pm.*, users.master_password from password_manager pm 
+                    left join users on users.user_id = pm.user_id";
+            }
+            else
+            {
+                this._state.db.cmd.CommandText = String.Format(@"
+                    select pm.*, users.master_password from password_manager pm 
+                    left join users on users.user_id = pm.user_id
+                    where pm.user_id = {0};
+                    ", this._state.user.user_id);
+            }
             SQLiteDataReader reader = this._state.db.cmd.ExecuteReader();
             List<PasswordManager> list = PasswordManager.GetPasswordManagreList(ref reader);
-            Trace.WriteLine("count: " + list.Count);
-            Trace.WriteLine("user_id: " + this._state.user.user_id);
             return list;
+        }
+
+        private void EditButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button button = sender as Button;
+            int index = userListBox.Items.IndexOf(button.DataContext);
+            PasswordManager selectedUser = (PasswordManager)userListBox.Items[index];
+            Trace.WriteLine(selectedUser);
+
+            if (selectedUser != null)
+            {
+                EditWindow editUserWindow = new EditWindow(selectedUser);
+                editUserWindow.ShowDialog();
+                userListBox.ItemsSource = GetData();
+            }
         }
     }
 }

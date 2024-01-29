@@ -12,7 +12,7 @@
     <Grid>
         <StackPanel HorizontalAlignment="Stretch" Margin="92,50,92,50">
             <Rectangle Height="100" Stroke="Transparent" Width="572"/>
-            <TextBox x:Name="username" VerticalAlignment="Center" TextWrapping="Wrap" Text="Username" Height="36" TextChanged="TextBox_TextChanged"/>
+            <TextBox x:Name="username" VerticalAlignment="Center" TextWrapping="Wrap" Text="john" Height="36" TextChanged="TextBox_TextChanged"/>
             <Rectangle Height="20" Stroke="Transparent" Width="572"/>
             <PasswordBox x:Name="password" Password="password" VerticalAlignment="Center" Height="36"/>
             <Rectangle Height="20" Stroke="Transparent" Width="572"/>
