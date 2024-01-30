@@ -21,6 +21,9 @@ namespace PasswordHelper
         public DateTime updated_at;
         public string _master_key;
         private bool _isPasswordVisible;
+        public Game game = null;
+        public Website website = null;
+        public Desktop desktop = null;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 

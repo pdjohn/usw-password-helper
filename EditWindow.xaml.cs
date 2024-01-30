@@ -40,16 +40,21 @@ namespace PasswordHelper
             websitePanel.Visibility = Visibility.Collapsed;
             gamePanel.Visibility = Visibility.Collapsed;
             desktopPanel.Visibility = Visibility.Collapsed;
-            if(this._pm.Application == "website")
+            if (this._pm.Application == "website")
             {
                 websitePanel.Visibility = Visibility.Visible;
+                websiteName.Text = this._pm.website.website_name;
+                websiteUrl.Text = this._pm.website.website_url;
             }
-            else if(this._pm.Application == "game")
+            else if (this._pm.Application == "game")
             {
                 gamePanel.Visibility = Visibility.Visible;
-            }else if(this._pm.Application == "desktop")
+                gameName.Text = this._pm.game.game_name;
+                gameAuthor.Text = this._pm.game.game_author;
+            } else if (this._pm.Application == "desktop")
             {
-                desktopPanel.Visibility= Visibility.Visible;
+                desktopPanel.Visibility = Visibility.Visible;
+                desktopName.Text = this._pm.desktop.desktop_name;
             }
 
         }
@@ -79,17 +84,34 @@ namespace PasswordHelper
             ", user_name, encrypted_password, this._pm.pm_id);
             this._state.db.cmd.ExecuteNonQuery();
 
-            if(this._pm.Application == "game")
+            if (this._pm.Application == "game")
             {
-                // update password entry for game object.
-            }else if(this._pm.Application == "desktop")
+                this._state.db.cmd.CommandText = String.Format(@"
+                    UPDATE game
+                    SET game_name = '{0}', game_developer = '{1}'
+                    where game_id = {2}
+                ", gameName.Text, gameAuthor.Text, this._pm.game.game_id);
+                this._state.db.cmd.ExecuteNonQuery();
+
+            } else if (this._pm.Application == "desktop")
             {
-                // update password entry for desktop object.
-            }else if(this._pm.Application == "website")
+                this._state.db.cmd.CommandText = String.Format(@"
+                    UPDATE desktop 
+                    SET desktop_name = '{0}'
+                    where desktop_id = {1}
+                ", desktopName.Text, this._pm.desktop.desktop_id);
+                this._state.db.cmd.ExecuteNonQuery();
+
+            } else if (this._pm.Application == "website")
             {
-                // update password entry for website object.
+                this._state.db.cmd.CommandText = String.Format(@"
+                    UPDATE website 
+                    SET website_name = '{0}', website_url = '{1}'
+                    where website_id = {2}
+                ", websiteName.Text, websiteUrl.Text, this._pm.website.website_id);
+                this._state.db.cmd.ExecuteNonQuery();
             }
             this.Close();
-        }
+        }        
     }
 }

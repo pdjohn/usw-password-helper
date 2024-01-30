@@ -25,5 +25,10 @@ namespace PasswordHelper
             }
             return _instance;
         }
+
+        public void Clear()
+        {
+            this._user = null;
+        }
     }
 }
