@@ -5,6 +5,7 @@ using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace PasswordHelper
@@ -24,10 +25,17 @@ namespace PasswordHelper
         public Game game = null;
         public Website website = null;
         public Desktop desktop = null;
+        public string application_name;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string UserName { get { return user_name; } }
+        public string ApplicationName
+        {
+            get {
+                return application_name;
+            }
+        }
         public string Password
         {
             get {
@@ -45,7 +53,7 @@ namespace PasswordHelper
         public PasswordManager(
             Int64 pm_id, int user_id, string user_name, string password,
             string application, int application_id, DateTime created_at, 
-            DateTime updated_at, string master_key
+            DateTime updated_at, string master_key, string application_name
         )
         {
             this.pm_id = pm_id;
@@ -57,7 +65,7 @@ namespace PasswordHelper
             this.created_at = created_at;
             this.updated_at = updated_at;
             this._master_key = master_key;
-
+            this.application_name = application_name;
         }
 
         public static List<PasswordManager> GetPasswordManagreList(ref SQLiteDataReader reader)
@@ -69,6 +77,19 @@ namespace PasswordHelper
                 //for (int i = 0; i < reader.StepCount; i++)
                 while (reader.Read())
                 {
+                    string application_name = "";
+                    if ((string)reader["application"] == "game")
+                    {
+                        application_name = (string)reader["game_name"];
+                    }
+                    else if ((string)reader["application"] == "desktop")
+                    {
+                        application_name = (string)reader["desktop_name"];
+                    }
+                    else if ((string)reader["application"] == "website")
+                    {
+                        application_name = (string)reader["website_name"];
+                    }
                     //reader.Read();
                     list.Add(new PasswordManager(
                         (Int64)reader["pm_id"],
@@ -79,7 +100,8 @@ namespace PasswordHelper
                         (int)reader["application_id"],
                         (DateTime)reader["created_at"],
                         (DateTime)reader["updated_at"],
-                        (string)reader["master_password"]
+                        (string)reader["master_password"],
+                        application_name 
                       ));
                 }
             }

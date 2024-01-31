@@ -13,6 +13,8 @@ namespace PasswordHelper
         public string password;
         private string? master_password;
 
+        public string MasterPassword { get { return master_password; } }
+
         public Users(Int64 user_id, string user_name, string password, string user_role, string? master_password) { 
             this.user_id = user_id;
             this.user_name = user_name;

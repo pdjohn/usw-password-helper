@@ -15,7 +15,7 @@
                     <TextBox Width="150" x:Name="websiteName" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Website Name" VerticalAlignment="Top" TextChanged="TextBox_TextChanged" Height="30"/>
                 </StackPanel>
                 <StackPanel Width="150" Margin="5,0,0,0">
-                    <Label Content="Website Name"/>
+                    <Label Content="Website Url"/>
                     <TextBox Width="150" x:Name="websiteUrl"  HorizontalAlignment="Left" TextWrapping="Wrap" Text="Website Url" VerticalAlignment="Top" TextChanged="TextBox_TextChanged" Height="30"/>
                 </StackPanel>
             </StackPanel>
