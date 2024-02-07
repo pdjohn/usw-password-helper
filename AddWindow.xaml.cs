@@ -116,5 +116,10 @@ namespace PasswordHelper
 
             this.Close();
         }
+
+        private void Generate(object sender, RoutedEventArgs e)
+        {
+            password.Text = this._pmh.GeneratePassword();
+        }
     }
 }

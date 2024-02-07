@@ -19,7 +19,7 @@ namespace PasswordHelper
             get { return master_key_length; }
             set { master_key_length = value; }
         }
-
+        
         private void GenerateSymbolTable()
         {
             for(char c = 'A'; c <= 'Z'; c++)
@@ -148,6 +148,18 @@ namespace PasswordHelper
             }
 
             return reverseLookup;
+        }
+
+        public string GeneratePassword(int length = 32)
+        {
+            Dictionary<int, char> rev_lookup = CreateReverseLookup(symbolTable);
+            string password = "";
+            Random r = new Random();
+            for(int i =0; i < length; i++)
+            {
+                password += rev_lookup[(int)r.NextInt64(1, rev_lookup.Count - 1)]; 
+            }
+            return password;
         }
     };
 
